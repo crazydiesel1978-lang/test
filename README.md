@@ -1,48 +1,70 @@
 # test
 
-Laravel application scaffolded with PHP 8.3+, Laravel 13, and PostgreSQL.
+Laravel mini-site with a public home page and a small auth-protected admin for editing the home banner.
+
+## Stack
+
+| Piece    | Notes |
+|----------|-------|
+| PHP      | `^8.3` |
+| Laravel  | 13.x + Breeze (Blade) |
+| Database | PostgreSQL (`DB_CONNECTION=pgsql` in `.env.example`) |
 
 ## Requirements
 
-- PHP 8.3 or newer (extensions: `mbstring`, `xml`, `curl`, `zip`, `pgsql`/`pdo_pgsql`, `bcmath`, `intl`)
-- [Composer](https://getcomposer.org/)
+- PHP 8.3+ with `mbstring`, `xml`, `curl`, `zip`, `pgsql`/`pdo_pgsql`, `bcmath`, `intl`
+- Composer
+- Node.js + npm (for Vite/Tailwind assets)
 - PostgreSQL 14+ (or compatible)
 
 ## Setup
 
 ```bash
-# Install PHP dependencies
 composer install
+npm install && npm run build
 
-# Copy environment file and generate an app key
 cp .env.example .env
 php artisan key:generate
 
-# Edit .env — set DB_DATABASE, DB_USERNAME, and DB_PASSWORD for your Postgres instance
-# Defaults: host 127.0.0.1, port 5432, database laravel, user laravel
+# Edit .env for your Postgres instance:
+# DB_CONNECTION=pgsql
+# DB_HOST=127.0.0.1
+# DB_PORT=5432
+# DB_DATABASE=laravel
+# DB_USERNAME=laravel
+# DB_PASSWORD=secret
 
-# Create the database (example)
-# createdb -U laravel laravel
-
-# Run migrations
-php artisan migrate
-
-# Optional: frontend assets
-npm install && npm run build
-
-# Start the local server
+php artisan migrate --seed
 php artisan serve
 ```
 
-Do not commit `.env` — it is gitignored. Keep secrets out of version control; only `.env.example` holds placeholders.
+Then open:
 
-## Stack
+- Public home: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+- Admin: [http://127.0.0.1:8000/admin](http://127.0.0.1:8000/admin) (redirects to login when signed out)
 
-| Piece        | Version / notes                          |
-|--------------|------------------------------------------|
-| PHP          | `^8.3` (see `composer.json`)             |
-| Laravel      | 13.x (`laravel/framework`)               |
-| Database     | PostgreSQL (`DB_CONNECTION=pgsql`)       |
+Do not commit `.env`. Keep secrets out of git; only `.env.example` has placeholders.
+
+## Default admin user
+
+Seeded by `php artisan db:seed` / `migrate --seed`:
+
+| Field    | Value |
+|----------|-------|
+| Email    | `admin@example.com` |
+| Password | `password` |
+
+Change this password before any shared or production use.
+
+## Routes
+
+| Path | Description |
+|------|-------------|
+| `/` | Public home with top menu + hero banner |
+| `/login` | Breeze login |
+| `/admin` | Admin dashboard (auth required) |
+| `/admin/banner` | Edit banner title, subtitle, CTA text/URL |
+| `/dashboard` | Redirects to `/admin` |
 
 ## License
 

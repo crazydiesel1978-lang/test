@@ -2,9 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\SiteSetting;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,11 +17,28 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        User::query()->updateOrCreate(
+            ['email' => 'admin@example.com'],
+            [
+                'name' => 'Admin',
+                'password' => Hash::make('password'),
+                'email_verified_at' => now(),
+            ],
+        );
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        $banner = [
+            'banner_title' => 'Build something simple',
+            'banner_subtitle' => 'A Laravel mini-site with a public home page and a small admin for editing this banner.',
+            'banner_cta_text' => 'Open admin',
+            'banner_cta_url' => '/admin',
+        ];
+
+        $settings = SiteSetting::query()->first();
+
+        if ($settings) {
+            $settings->update($banner);
+        } else {
+            SiteSetting::query()->create($banner);
+        }
     }
 }
